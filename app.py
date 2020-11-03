@@ -102,7 +102,7 @@ def add_task():
     if request.method == "POST":
         is_urgent = "on" if request.form.get("is_urgent") else "off"
         task = {
-            "catagory_name": request.form.get("catagory_name"),
+            "category_name": request.form.get("category_name"),
             "task_name": request.form.get("task_name"),
             "task_description": request.form.get("task_description"),
             "is_urgent": is_urgent,
@@ -113,8 +113,8 @@ def add_task():
         flash("Task Successfuly Added")
         return redirect(url_for("get_tasks"))
 
-    catagories = mongo.db.catagories.find().sort("catagory_name", 1)
-    return render_template("add_task.html", catagories=catagories)
+    categories = mongo.db.categories.find().sort("category_name", 1)
+    return render_template("add_task.html", categories=categories)
 
 
 @app.route("/edit_task/<task_id>", methods=["GET", "POST"])
@@ -122,7 +122,7 @@ def edit_task(task_id):
     if request.method == "POST":
         is_urgent = "on" if request.form.get("is_urgent") else "off"
         submit = {
-            "catagory_name": request.form.get("catagory_name"),
+            "category_name": request.form.get("category_name"),
             "task_name": request.form.get("task_name"),
             "task_description": request.form.get("task_description"),
             "is_urgent": is_urgent,
@@ -134,8 +134,8 @@ def edit_task(task_id):
 
     task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
 
-    catagories = mongo.db.catagories.find().sort("catagory_name", 1)
-    return render_template("edit_task.html", task=task, catagories=catagories)
+    categories = mongo.db.categories.find().sort("category_name", 1)
+    return render_template("edit_task.html", task=task, categories=categories)
 
 
 @app.route("/delete_task/<task_id>")
@@ -143,6 +143,11 @@ def delete_task(task_id):
     mongo.db.tasks.remove({"_id": ObjectId(task_id)})
     flash("Task Successfully Deleted")
     return redirect(url_for("get_tasks"))
+
+@app.route("/get_categories")
+def get_categories():
+    categories = list(mongo.db.categories.find().sort("category_name", 1))
+    return render_template("categories.html", categories=categories)
 
 
 if __name__ == "__main__":
